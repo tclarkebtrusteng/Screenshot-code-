@@ -1,5 +1,10 @@
+# Specify the virtual machine name
 $vmName = "Test Build HKTC"
+
+# Specify the path to save the screenshot
 $screenshotPath = "C:\Desktop"
+
+# Specify the Hyper-V server name or IP address
 $hyperVServer = "blade5.btrusteng.com"
 
 # Establish a remote PowerShell session to the Hyper-V server
@@ -12,12 +17,19 @@ Invoke-Command -Session $session -ScriptBlock {
     # Get the virtual machine
     $vm = Get-VM -Name $vmName
 
-    # Take the screenshot
-    $screenshot = Save-VMConsoleScreenshot -VM $vm
+    # Check if Hyper-V Integration Services are installed on the virtual machine
+    if ($vm.Guest.State -eq "OperatingSystemRunning" -and $vm.Guest.IntegrationServicesState -eq "Running") {
+        # Capture the screenshot of the virtual machine console
+        $screenshot = Save-VMConsoleScreenshot -VM $vm
 
-    # Save the screenshot to the specified path
-    $screenshot | Export-VMConsoleScreenshot -Path $screenshotPath
+        # Save the screenshot to the specified path
+        $screenshot | Export-VMConsoleScreenshot -Path $screenshotPath
+    }
+    else {
+        Write-Host "Cannot capture the screenshot. Please ensure that the virtual machine is running and has Hyper-V Integration Services installed."
+    }
 } -ArgumentList $vmName, $screenshotPath
 
 # Close the remote PowerShell session
 Remove-PSSession $session
+
