@@ -1,0 +1,24 @@
+$vmName = "Test Build HKTC"
+$screenshotPath = "C:Desktop"
+$hyperVServer = "scvmm.btrusteng.com:8100"
+
+# Establish a remote PowerShell session to the Hyper-V server
+$session = New-PSSession -ComputerName $hyperVServer
+
+# Take a screenshot of the virtual machine
+Invoke-Command -Session $session -ScriptBlock {
+    param($vmName, $screenshotPath)
+
+    # Get the virtual machine
+    $vm = Get-VM -Name $vmName
+
+    # Take the screenshot
+    $vm | Get-VMVideo | Set-VMVideo -ScreenResolution 1024x768
+    $vm | Get-VMVideo | Get-VMRemoteFx3dVideoAdapter | Update-VMRemoteFx3dVideoAdapter -MaximumResolution 1024x768
+
+    # Save the screenshot
+    $vm | Get-VMVideo | Get-VMRemoteFx3dVideoAdapter | Out-VMVideo -DestinationPath $screenshotPath
+} -ArgumentList $vmName, $screenshotPath
+
+# Close the remote PowerShell session
+Remove-PSSession $session
