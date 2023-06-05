@@ -1,5 +1,5 @@
 $vmName = "Test Build HKTC"
-$screenshotPath = "C:Desktop"
+$screenshotPath = "C:\Desktop"
 $hyperVServer = "scvmm.btrusteng.com:8100"
 
 # Establish a remote PowerShell session to the Hyper-V server
