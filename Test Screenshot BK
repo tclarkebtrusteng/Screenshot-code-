@@ -13,13 +13,11 @@ Invoke-Command -Session $session -ScriptBlock {
     $vm = Get-VM -Name $vmName
 
     # Take the screenshot
-    $vm | Get-VMVideo | Set-VMVideo -ResolutionWidth 1024 -ResolutionHeight 768
-    $vm | Get-VMVideo | Get-VMRemoteFx3dVideoAdapter | Update-VMRemoteFx3dVideoAdapter -MaximumResolutionWidth 1024 -MaximumResolutionHeight 768
+    $screenshot = Save-VMConsoleScreenshot -VM $vm
 
-    # Save the screenshot
-    $vm | Get-VMVideo | Get-VMRemoteFx3dVideoAdapter | Out-VMVideo -DestinationPath $screenshotPath
+    # Save the screenshot to the specified path
+    $screenshot | Export-VMConsoleScreenshot -Path $screenshotPath
 } -ArgumentList $vmName, $screenshotPath
 
 # Close the remote PowerShell session
 Remove-PSSession $session
-
